@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TechMove GLMS</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/GLMS.Web.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="topbar">
+        <nav class="navbar navbar-expand-lg container app-nav" aria-label="Main navigation">
+            <a class="navbar-brand brand-lockup" asp-controller="Home" asp-action="Index">
+                <span class="brand-mark" aria-hidden="true">T</span>
+                <span><strong>TECHMOVE</strong><small>LOGISTICS CONTROL</small></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation" aria-controls="mainNavigation" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNavigation">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Overview</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Clients" asp-action="Index">Clients</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Contracts" asp-action="Index">Contracts</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="ServiceRequests" asp-action="Index">Service requests</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main class="container app-main">
+        @if (TempData["Notice"] is string notice)
+        {
+            <div class="alert notice-banner" role="status">@notice</div>
+        }
+        @RenderBody()
+    </main>
+    <footer class="app-footer">
+        <div class="container d-flex justify-content-between gap-3"><span>TECHMOVE / GLOBAL OPERATIONS</span><span>GLMS · 2026</span></div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

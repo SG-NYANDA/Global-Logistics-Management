@@ -1,0 +1,27 @@
+@model ContractCreateViewModel
+@{
+    ViewData["Title"] = "Add contract";
+}
+
+<section class="page-heading"><div><p class="eyebrow">AGREEMENTS / NEW CONTRACT</p><h1>Add a contract</h1><p class="heading-note">Every contract must be linked to a client and include its signed PDF.</p></div></section>
+@if (!Model.Clients.Any())
+{
+    <div class="empty-state"><strong>Add a client first</strong><span>A contract cannot be created without an existing client record.</span><a class="btn btn-primary" asp-controller="Clients" asp-action="Create">Add client</a></div>
+}
+else
+{
+    <form asp-action="Create" method="post" enctype="multipart/form-data" class="form-shell">
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+        <div class="form-grid">
+            <div class="field-group"><label asp-for="Reference" class="form-label">Contract reference</label><input asp-for="Reference" class="form-control" /><span asp-validation-for="Reference" class="field-error"></span></div>
+            <div class="field-group"><label asp-for="ClientId" class="form-label">Client</label><select asp-for="ClientId" asp-items="Model.Clients" class="form-select"><option value="">Select client</option></select><span asp-validation-for="ClientId" class="field-error"></span></div>
+            <div class="field-group"><label asp-for="ServiceLevel" class="form-label">Service level agreement</label><input asp-for="ServiceLevel" class="form-control" placeholder="e.g. Express freight, 48-hour delivery" /><span asp-validation-for="ServiceLevel" class="field-error"></span></div>
+            <div class="field-group"><label asp-for="Status" class="form-label">Status</label><select asp-for="Status" asp-items="Html.GetEnumSelectList<ContractStatus>()" class="form-select"></select></div>
+            <div class="field-group"><label asp-for="StartDate" class="form-label">Start date</label><input asp-for="StartDate" class="form-control" /><span asp-validation-for="StartDate" class="field-error"></span></div>
+            <div class="field-group"><label asp-for="EndDate" class="form-label">End date</label><input asp-for="EndDate" class="form-control" /><span asp-validation-for="EndDate" class="field-error"></span></div>
+            <div class="field-group field-wide"><label asp-for="Agreement" class="form-label">Signed agreement PDF</label><input asp-for="Agreement" type="file" accept=".pdf,application/pdf" class="form-control" /><span class="field-hint">PDF only · maximum 10 MB</span><span asp-validation-for="Agreement" class="field-error"></span></div>
+        </div>
+        <div class="form-actions"><a class="btn btn-link" asp-action="Index">Cancel</a><button class="btn btn-primary" type="submit">Save contract</button></div>
+    </form>
+}
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

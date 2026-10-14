@@ -1,0 +1,16 @@
+@model ClientCreateViewModel
+@{
+    ViewData["Title"] = "Add client";
+}
+
+<section class="page-heading"><div><p class="eyebrow">DIRECTORY / NEW CLIENT</p><h1>Add a client</h1><p class="heading-note">Client details are used to identify and group contracts.</p></div></section>
+<form asp-action="Create" method="post" class="form-shell">
+    <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+    <div class="form-grid">
+        <div class="field-group"><label asp-for="Name" class="form-label">Client name</label><input asp-for="Name" class="form-control" autocomplete="organization" /><span asp-validation-for="Name" class="field-error"></span></div>
+        <div class="field-group"><label asp-for="Region" class="form-label">Operating region</label><input asp-for="Region" class="form-control" placeholder="e.g. Southern Africa" /><span asp-validation-for="Region" class="field-error"></span></div>
+        <div class="field-group field-wide"><label asp-for="ContactDetails" class="form-label">Contact details</label><input asp-for="ContactDetails" class="form-control" placeholder="Name, email or phone" /><span asp-validation-for="ContactDetails" class="field-error"></span></div>
+    </div>
+    <div class="form-actions"><a class="btn btn-link" asp-action="Index">Cancel</a><button class="btn btn-primary" type="submit">Save client</button></div>
+</form>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

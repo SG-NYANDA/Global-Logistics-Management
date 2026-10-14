@@ -1,0 +1,48 @@
+@model ServiceRequestCreateViewModel
+@{
+    ViewData["Title"] = "New service request";
+}
+
+<section class="page-heading"><div><p class="eyebrow">OPERATIONS / NEW REQUEST</p><h1>Log service request</h1><p class="heading-note">Only active contracts within their date range can receive new work.</p></div></section>
+@if (!Model.Contracts.Any())
+{
+    <div class="empty-state"><strong>No eligible contracts</strong><span>There are no active contracts available for new requests right now.</span><a class="btn btn-outline-primary" asp-controller="Contracts" asp-action="Index">Review contracts</a></div>
+}
+else
+{
+    <form asp-action="Create" method="post" class="form-shell" id="request-form" data-rate-url="@Url.Action("CurrentRate")">
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+        <div class="form-grid">
+            <div class="field-group field-wide"><label asp-for="ContractId" class="form-label">Contract</label><select asp-for="ContractId" asp-items="Model.Contracts" class="form-select"><option value="">Choose an eligible contract</option></select><span asp-validation-for="ContractId" class="field-error"></span></div>
+            <div class="field-group field-wide"><label asp-for="Description" class="form-label">Request description</label><textarea asp-for="Description" class="form-control" rows="3" placeholder="Describe the freight service required"></textarea><span asp-validation-for="Description" class="field-error"></span></div>
+            <div class="field-group"><label asp-for="UsdCost" class="form-label">Estimated cost (USD)</label><div class="input-group"><span class="input-group-text">$</span><input asp-for="UsdCost" class="form-control" id="usd-cost" type="number" min="0" step="0.01" /></div><span asp-validation-for="UsdCost" class="field-error"></span></div>
+            <div class="conversion-readout"><span>LIVE ESTIMATE / SOUTH AFRICAN RAND</span><strong id="zar-estimate">Loading rate…</strong><small id="rate-detail" role="status">The final saved cost uses a fresh server-side rate.</small></div>
+        </div>
+        <div class="form-actions"><a class="btn btn-link" asp-action="Index">Cancel</a><button class="btn btn-primary" type="submit">Save request</button></div>
+    </form>
+}
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const form = document.getElementById("request-form");
+            if (!form) return;
+            const amount = document.getElementById("usd-cost");
+            const estimate = document.getElementById("zar-estimate");
+            const detail = document.getElementById("rate-detail");
+            let rate = null;
+            const update = () => {
+                const usd = Number(amount.value);
+                estimate.textContent = rate === null || !Number.isFinite(usd)
+                    ? "Rate unavailable"
+                    : new Intl.NumberFormat("en-ZA", { style: "currency", currency: "ZAR" }).format(usd * rate);
+                if (rate !== null) detail.textContent = `1 USD = ${rate.toFixed(4)} ZAR · final rate confirmed on save`;
+            };
+            fetch(form.dataset.rateUrl)
+                .then(response => { if (!response.ok) throw new Error(); return response.json(); })
+                .then(data => { rate = Number(data.rate); update(); })
+                .catch(() => { estimate.textContent = "Rate unavailable"; detail.textContent = "Try again later; no estimate is being shown."; });
+            amount.addEventListener("input", update);
+        })();
+    </script>
+}

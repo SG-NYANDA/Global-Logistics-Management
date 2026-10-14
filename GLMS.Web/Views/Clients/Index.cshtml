@@ -1,0 +1,26 @@
+@model IReadOnlyList<Client>
+@{
+    ViewData["Title"] = "Clients";
+}
+
+<section class="page-heading">
+    <div><p class="eyebrow">DIRECTORY / CLIENTS</p><h1>Client directory</h1><p class="heading-note">Manage the organisations and contacts behind each freight contract.</p></div>
+    <a class="btn btn-primary" asp-action="Create">Add client <span aria-hidden="true">+</span></a>
+</section>
+
+<section class="content-section">
+    <div class="section-heading"><div><p class="eyebrow">REGISTERED CLIENTS</p><h2>@Model.Count client@(Model.Count == 1 ? "" : "s")</h2></div></div>
+    @if (Model.Count == 0)
+    {
+        <div class="empty-state"><strong>Your client list is empty</strong><span>Add a client before creating its first contract.</span><a class="btn btn-outline-primary" asp-action="Create">Add first client</a></div>
+    }
+    else
+    {
+        <div class="table-responsive"><table class="table data-table"><thead><tr><th>Client</th><th>Contact details</th><th>Region</th><th class="text-end">Contracts</th></tr></thead><tbody>
+        @foreach (var client in Model)
+        {
+            <tr><td><strong>@client.Name</strong></td><td>@client.ContactDetails</td><td>@client.Region</td><td class="text-end">@client.Contracts.Count</td></tr>
+        }
+        </tbody></table></div>
+    }
+</section>

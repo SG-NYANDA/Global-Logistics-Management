@@ -1,0 +1,24 @@
+@model IReadOnlyList<ServiceRequest>
+@{
+    ViewData["Title"] = "Service requests";
+}
+
+<section class="page-heading">
+    <div><p class="eyebrow">OPERATIONS / SERVICE REQUESTS</p><h1>Service request queue</h1><p class="heading-note">Freight work logged against valid contracts, with recorded USD/ZAR rates.</p></div>
+    <a class="btn btn-primary" asp-action="Create">New request <span aria-hidden="true">+</span></a>
+</section>
+<section class="content-section">
+    @if (Model.Count == 0)
+    {
+        <div class="empty-state"><strong>The queue is clear</strong><span>Create a request from an active contract to begin tracking freight work.</span><a class="btn btn-outline-primary" asp-action="Create">Create request</a></div>
+    }
+    else
+    {
+        <div class="table-responsive"><table class="table data-table"><thead><tr><th>Request</th><th>Client / contract</th><th>Created</th><th>USD amount</th><th>Rate</th><th>Status</th><th class="text-end">ZAR cost</th></tr></thead><tbody>
+        @foreach (var request in Model)
+        {
+            <tr><td><strong>@request.Description</strong></td><td>@request.Contract?.Client?.Name<small>@request.Contract?.Reference</small></td><td>@request.CreatedUtc.ToLocalTime().ToString("dd MMM yyyy")</td><td>$ @request.UsdCost.ToString("N2")</td><td>@request.ExchangeRate.ToString("N4")</td><td><span class="status-tag">@request.Status</span></td><td class="text-end amount">R @request.LocalCost.ToString("N2")</td></tr>
+        }
+        </tbody></table></div>
+    }
+</section>

@@ -1,0 +1,37 @@
+﻿@model DashboardViewModel
+@{
+    ViewData["Title"] = "Operations overview";
+}
+
+<section class="page-heading dashboard-heading">
+    <div><p class="eyebrow">GLOBAL OPERATIONS / OVERVIEW</p><h1>Good work starts with a clear view.</h1><p class="heading-note">Contracts, clients and freight activity in one place.</p></div>
+    <a class="btn btn-primary" asp-controller="ServiceRequests" asp-action="Create">New service request <span aria-hidden="true">+</span></a>
+</section>
+
+<section class="metric-strip" aria-label="Operations summary">
+    <div class="metric"><span>CLIENTS</span><strong>@Model.ClientCount</strong><a asp-controller="Clients" asp-action="Index">View directory</a></div>
+    <div class="metric"><span>ACTIVE CONTRACTS</span><strong>@Model.ActiveContractCount</strong><a asp-controller="Contracts" asp-action="Index" asp-route-status="Active">Review contracts</a></div>
+    <div class="metric"><span>OPEN REQUESTS</span><strong>@Model.OpenRequestCount</strong><a asp-controller="ServiceRequests" asp-action="Index">View queue</a></div>
+</section>
+
+<section class="content-section">
+    <div class="section-heading"><div><p class="eyebrow">LATEST ACTIVITY</p><h2>Service request queue</h2></div><a class="text-link" asp-controller="ServiceRequests" asp-action="Index">All requests <span aria-hidden="true">→</span></a></div>
+    @if (Model.RecentRequests.Count == 0)
+    {
+        <div class="empty-state"><strong>No service requests yet</strong><span>Once a request is raised against an active contract, it will appear here.</span></div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table data-table">
+                <thead><tr><th>Request</th><th>Client / contract</th><th>Created</th><th>Status</th><th class="text-end">ZAR cost</th></tr></thead>
+                <tbody>
+                @foreach (var request in Model.RecentRequests)
+                {
+                    <tr><td><strong>@request.Description</strong><small>USD @request.UsdCost.ToString("N2") at @request.ExchangeRate.ToString("N4")</small></td><td>@request.Contract?.Client?.Name<small>@request.Contract?.Reference</small></td><td>@request.CreatedUtc.ToLocalTime().ToString("dd MMM yyyy")</td><td><span class="status-tag">@request.Status</span></td><td class="text-end amount">R @request.LocalCost.ToString("N2")</td></tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

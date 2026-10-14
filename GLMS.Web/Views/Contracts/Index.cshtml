@@ -1,0 +1,34 @@
+@model ContractIndexViewModel
+@{
+    ViewData["Title"] = "Contracts";
+}
+
+<section class="page-heading">
+    <div><p class="eyebrow">AGREEMENTS / CONTRACTS</p><h1>Contract register</h1><p class="heading-note">Track service levels, validity windows and signed agreements.</p></div>
+    <a class="btn btn-primary" asp-action="Create">Add contract <span aria-hidden="true">+</span></a>
+</section>
+
+<form asp-action="Index" method="get" class="filter-bar">
+    <div class="filter-title"><span class="eyebrow">FILTER REGISTER</span><strong>Find a contract</strong></div>
+    <div class="filter-control"><label for="status">Status</label><select id="status" name="status" class="form-select"><option value="">All statuses</option>@foreach (var status in Enum.GetValues<ContractStatus>()) { <option value="@status" selected="@(Model.Status == status)">@status</option> }</select></div>
+    <div class="filter-control"><label for="fromDate">Overlaps from</label><input id="fromDate" name="fromDate" type="date" value="@Model.FromDate?.ToString("yyyy-MM-dd")" class="form-control" /></div>
+    <div class="filter-control"><label for="toDate">Through</label><input id="toDate" name="toDate" type="date" value="@Model.ToDate?.ToString("yyyy-MM-dd")" class="form-control" /></div>
+    <button type="submit" class="btn btn-dark">Apply filters</button>
+</form>
+
+<section class="content-section">
+    @if (Model.Contracts.Count == 0)
+    {
+        <div class="empty-state"><strong>No matching contracts</strong><span>Adjust the filters or add a contract to the register.</span></div>
+    }
+    else
+    {
+        <div class="table-responsive"><table class="table data-table"><thead><tr><th>Reference / client</th><th>Service level</th><th>Validity</th><th>Status</th><th>Agreement</th></tr></thead><tbody>
+        @foreach (var contract in Model.Contracts)
+        {
+            var effectiveStatus = ContractWorkflow.GetEffectiveStatus(contract, DateTime.UtcNow);
+            <tr><td><strong>@contract.Reference</strong><small>@contract.Client?.Name</small></td><td>@contract.ServiceLevel</td><td>@contract.StartDate.ToString("dd MMM yyyy")<small>to @contract.EndDate.ToString("dd MMM yyyy")</small></td><td><span class="status-tag status-@effectiveStatus.ToString().ToLowerInvariant()">@effectiveStatus</span></td><td><a class="text-link" asp-action="DownloadAgreement" asp-route-id="@contract.Id">Download PDF</a></td></tr>
+        }
+        </tbody></table></div>
+    }
+</section>
